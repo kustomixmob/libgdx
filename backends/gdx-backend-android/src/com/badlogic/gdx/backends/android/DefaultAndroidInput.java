@@ -920,7 +920,7 @@ public class DefaultAndroidInput extends AbstractInput implements AndroidInput, 
 					if (configuration.isShowPasswordButton()) {
 						final ImageView imageView = new ImageView(context);
 
-						imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.design_ic_visibility);
+						imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.gdx_design_ic_visibility);
 						RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
 							RelativeLayout.LayoutParams.WRAP_CONTENT);
 						params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -939,10 +939,10 @@ public class DefaultAndroidInput extends AbstractInput implements AndroidInput, 
 								isHidding = !isHidding;
 								if (isHidding) {
 									editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
-									imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.design_ic_visibility);
+									imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.gdx_design_ic_visibility);
 								} else {
 									editText.setTransformationMethod(null);
-									imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.design_ic_visibility_off);
+									imageView.setImageResource(com.badlogic.gdx.backends.android.R.drawable.gdx_design_ic_visibility_off);
 								}
 								// Seems to get reset by "setTransformationMethod"
 								editText.setSelection(start, end);
