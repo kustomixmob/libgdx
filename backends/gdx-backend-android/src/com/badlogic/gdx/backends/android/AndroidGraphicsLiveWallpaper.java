@@ -97,10 +97,20 @@ public final class AndroidGraphicsLiveWallpaper extends AndroidGraphics {
 			running = true;
 			resume = true;
 
+			// 2 s total: visibility callbacks aren't input events, but any input queued behind this
+			// block starts its own 5 s ANR clock — stay far under it. On timeout we break leaving
+			// resume == true, so the GL thread still delivers listener.resume() when it wakes (the
+			// handshake self-heals via onDrawFrame's flag consumption).
+			long deadline = System.nanoTime() + 2_000_000_000L;
 			while (resume) {
 				try {
 					requestRendering();
-					synch.wait();
+					synch.wait(2000);
+					if (resume && System.nanoTime() >= deadline) {
+						Gdx.app.error("AndroidGraphics",
+							"resume sync timed out; proceeding — GL thread will apply resume when it wakes");
+						break;
+					}
 				} catch (InterruptedException ignored) {
 					Gdx.app.log("AndroidGraphics", "waiting for resume synchronization failed!");
 				}
