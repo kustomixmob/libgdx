@@ -33,8 +33,6 @@ import com.badlogic.gdx.utils.IntArray;
  * Code adapted from {@link VertexBufferObject}.
  * @author mzechner, Dave Clayton <contact@redskyforge.com>, Nate Austin <nate.austin gmail> */
 public class VertexBufferObjectWithVAO implements VertexData {
-	final static IntBuffer tmpHandle = BufferUtils.newIntBuffer(1);
-
 	final VertexAttributes attributes;
 	final FloatBuffer buffer;
 	final ByteBuffer byteBuffer;
@@ -272,18 +270,20 @@ public class VertexBufferObjectWithVAO implements VertexData {
 		deleteVAO();
 	}
 
+	// Wave: the handle buffer used to be a static field shared by every instance. Live wallpapers run several GL threads in
+	// one process, so concurrent mesh creation advanced the shared buffer between glGenVertexArrays() and get() and threw
+	// BufferUnderflowException. Use a buffer per call instead.
 	private void createVAO () {
-		((Buffer)tmpHandle).clear();
-		Gdx.gl30.glGenVertexArrays(1, tmpHandle);
-		vaoHandle = tmpHandle.get();
+		IntBuffer handle = BufferUtils.newIntBuffer(1);
+		Gdx.gl30.glGenVertexArrays(1, handle);
+		vaoHandle = handle.get(0);
 	}
 
 	private void deleteVAO () {
 		if (vaoHandle != -1) {
-			((Buffer)tmpHandle).clear();
-			tmpHandle.put(vaoHandle);
-			((Buffer)tmpHandle).flip();
-			Gdx.gl30.glDeleteVertexArrays(1, tmpHandle);
+			IntBuffer handle = BufferUtils.newIntBuffer(1);
+			handle.put(0, vaoHandle);
+			Gdx.gl30.glDeleteVertexArrays(1, handle);
 			vaoHandle = -1;
 		}
 	}
